@@ -8,15 +8,54 @@
 #include <stdio.h>
 #include <vector>
 
-#include "objLoader/ObjLoader.h"
+#include "cube/cube.h"
+#include "player/player.h"
+#include "element/ground.h"
+#include "player/camera.h"
+
+#include <stdio.h>
+#include "loader/objLoader.h"
 
 
 using namespace glm;
 using namespace std;
 
 
+
+Player player;
+Ground ground;
+Drawable suzanne((char*)"loader/suzanne.obj");
+
+void mouse_callback(GLFWwindow* window, double mouseX, double mouseY)
+{
+    //cout << "Mouse cursor is at position (" << mouseX << ", " << mouseY << endl;
+
+
+}
+
+
+
 void key_callback(GLFWwindow* window, int key,
                   int scancode, int action, int mods){
+
+    if (action == GLFW_RELEASE){
+        switch (key){
+            case GLFW_KEY_A:
+                player.move(1.0f, 0,0);
+                break;
+            case GLFW_KEY_D:
+                player.move(-1.0f, 0,0);
+                break;
+            case GLFW_KEY_W:
+                player.move(0.0f, 0, 1.0f);
+                break;
+            case GLFW_KEY_S:
+                player.move(0.0f, 0, -1.0f);
+                break;
+
+        }
+
+    }
 }
 
 
@@ -28,13 +67,20 @@ void error_callback(int error, const char* description) {
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window) {
 
-    glClearColor(0,0,1,1);
 
-    vector<glm::vec4> suzanne_vertices;
-    vector<glm::vec3> suzanne_normals;
-    vector<GLushort> suzanne_elements;
+    glfwSetKeyCallback(window,key_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
 
-    load_obj("objects/suzanne.obj",suzanne_vertices, suzanne_normals, suzanne_elements );
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_COLOR_MATERIAL);
+
+    glClearColor(1,0,1,1);
+
+    cout<<"yolo"<<endl;
+
 
 }
 
@@ -43,9 +89,32 @@ void drawScene(GLFWwindow* window) {
     //************Tutaj umieszczaj kod rysujący obraz******************l
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wyczyść bufor kolorów (czyli przygotuj "płótno" do rysowania)
 
+    vec3 eye(player.posX, player.posY, player.posZ);
+    vec3 look(player.lookX, player.lookY, player.lookZ);
+    vec3 up(0,1,0);
+
+    mat4 V = lookAt(
+            eye,
+            look,
+            up
+        );
+
+    mat4 P = perspective(50*PI/180, 1.0f,1.0f,50.0f);
+
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(glm::value_ptr(P));
+    glMatrixMode(GL_MODELVIEW);
+
+    mat4 M = mat4(1.0f);
+    glLoadMatrixf(glm::value_ptr(V*M));
+
+
+    suzanne.draw();
+
+
 
     glfwSwapBuffers(window);
-
 }
 
 
@@ -58,6 +127,8 @@ int main() {
         fprintf(stderr, "Nie można zainicjować GLFW.\n");
         exit(EXIT_FAILURE);
     }
+
+
 
     window = glfwCreateWindow(500, 500,"RollerCoaster", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
@@ -78,9 +149,14 @@ int main() {
 
     initOpenGLProgram(window); //Operacje inicjujące
 
+
+
+
     //Główna pętla
     while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
     {
+
+
         drawScene(window);
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
