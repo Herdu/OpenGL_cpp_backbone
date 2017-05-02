@@ -24,7 +24,8 @@ using namespace std;
 
 Player player;
 Ground ground;
-Drawable suzanne((char*)"loader/suzanne.obj");
+
+Drawable suzanne((char*)"loader/untitled.obj");
 
 void mouse_callback(GLFWwindow* window, double mouseX, double mouseY)
 {
@@ -73,13 +74,12 @@ void initOpenGLProgram(GLFWwindow* window) {
 
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glShadeModel(GL_SMOOTH);
     glEnable(GL_DEPTH_TEST);
+    glShadeModel(GL_SMOOTH);
     glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
 
-    glClearColor(1,0,1,1);
-
-    cout<<"yolo"<<endl;
+    glClearColor(0,1,1,1);
 
 
 }
@@ -106,11 +106,8 @@ void drawScene(GLFWwindow* window) {
     glLoadMatrixf(glm::value_ptr(P));
     glMatrixMode(GL_MODELVIEW);
 
-    mat4 M = mat4(1.0f);
-    glLoadMatrixf(glm::value_ptr(V*M));
 
-
-    suzanne.draw();
+    suzanne.draw(V);
 
 
 

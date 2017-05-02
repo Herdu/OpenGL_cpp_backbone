@@ -6,22 +6,31 @@
 #define OPENGL_CPP_BACKBONE2_DRAWABLE_H
 
 #include <GL/glew.h>
-//#include <GLFW/glfw3.h>
-//#include <glm/glm.hpp>
-//#include <glm/gtc/type_ptr.hpp>
-//#include <glm/gtc/matrix_transform.hpp>
-
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 #include <vector>
+#include <algorithm>
 #include "../loader/objLoader.h"
 
 using namespace std;
+using namespace glm;
 
 class Drawable{
+private:
     vector<float> verticesBuffer;
+    vector<float> normalBuffer;
+
     int verticesCount;
+    mat4 modelMatrix;
+
+    float rotateX;
+    float rotateSpeed;
 
 public:
-    void draw();
+    void draw(mat4 V);
     Drawable(char* filename);
 };
 #endif //OPENGL_CPP_BACKBONE2_DRAWABLE_H
