@@ -8,8 +8,8 @@
 
 Drawable::Drawable(char *filename) {
 
-    rotateSpeed = 100.0f;
-    rotateX = 0.01f;
+    this->rotateSpeed = 100.0f;
+    this->rotateX = 0.01f;
 
     objLoader *objData = new objLoader();
 
@@ -32,10 +32,12 @@ Drawable::Drawable(char *filename) {
 
 
 
-        for (int i=0; i<objData->faceCount; i++) {
-        for (int j=0; j<3; j++){  //for every face
-            for(int k=0; k<3; k++){ //for every vertex in face
+        for (int i=0; i<objData->faceCount; i++) {//for every face
+        for (int j=0; j<3; j++){  //for every vertex in face
+            for(int k=0; k<3; k++){ //for every coordinate in vertex
+                //push vertex to buffer
                 this->verticesBuffer.push_back(objData->vertexList[objData->faceList[i]->vertex_index[j]]->e[k]);
+                //push vertex normal to buffer
                 this->normalBuffer.push_back(objData->normalList[objData->faceList[i]->normal_index[j]]->e[k]);
             }
 
@@ -73,7 +75,6 @@ void Drawable::draw(mat4 V) {
     //this->modelMatrix = scale(this->modelMatrix, vec3(0.01f,0.01f,0.01f));
 
     //  this->modelMatrix = translate(this->modelMatrix, vec3(0,-1.0f,30.0f));
-    glColor3d(1,0.4,0.3);
 
     glLoadMatrixf(glm::value_ptr(V*this->modelMatrix));
 

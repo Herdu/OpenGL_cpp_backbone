@@ -19,7 +19,7 @@ private:
 
 public:
     Ground();
-    void draw();
+    void draw(mat4 V);
 };
 
 #endif //OPENGL_CPP_BACKBONE2_GROUND_H

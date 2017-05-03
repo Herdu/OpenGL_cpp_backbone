@@ -4,28 +4,43 @@
 
 #ifndef OPENGL_CPP_BACKBONE2_PLAYER_H_H
 #define OPENGL_CPP_BACKBONE2_PLAYER_H_H
-
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+#include "../enum/directions.h"
+
+using namespace std;
+using namespace glm;
 
 class Player{
 
 public:
-    float posX;
-    float posY;
-    float posZ;
-    float lookX;
-    float lookY;
-    float lookZ;
-    float upX;
-    float upY;
-    float upZ;
+    vec3 eye;
+    vec3 look;
+    vec3 up;
+    mat4 cameraMatrix;
 
-    GLfloat deltaTime;
-    GLfloat lastFrame;
+    vec3 direction;
+    vec3 right;
+    vec3 position;
+
+    float step;
+    float rotStep;
+
+
+    float horizontalAngle;
+    float verticalAngle;
+
+
 
     Player();
-    void move(float x, float y, float z);
+    void move(Direction direction,float delta);
+    void rotate(Direction direction,float delta);
     void update();
+    mat4 getCameraMatrix();
 };
 
 #endif //OPENGL_CPP_BACKBONE2_PLAYER_H_H

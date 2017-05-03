@@ -6,8 +6,10 @@
 #include "ground.h"
 
 
-void Ground::draw(){
+void Ground::draw(mat4 V){
+    mat4 M = mat4(1.0f);
 
+    glLoadMatrixf(glm::value_ptr(V*M));
     glColor3d(0,1.0f,0);
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3,GL_FLOAT,0,this->vertices);
@@ -19,13 +21,14 @@ void Ground::draw(){
 Ground::Ground(){
 
     float vertices[] ={
+        0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,
 
-                    -1,0,-1,
-                    1,0,-1,
-                    1,0,1,
-                    -1,0,-1,
-                    1,0,1,
-                    -1,0,1
+        0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f
+
     };
 
     this->vertices = &vertices[0];

@@ -24,12 +24,13 @@ private:
     vector<float> normalBuffer;
 
     int verticesCount;
-    mat4 modelMatrix;
+
 
     float rotateX;
     float rotateSpeed;
 
 public:
+    mat4 modelMatrix;
     void draw(mat4 V);
     Drawable(char* filename);
 };
