@@ -155,8 +155,6 @@ void drawScene(GLFWwindow* window) {
     suzanne.draw(V);
 
 
-    Ground ground;
-    ground.draw(V);
     glfwSwapBuffers(window);
 }
 

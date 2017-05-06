@@ -28,8 +28,6 @@ Player::Player(){
 
 void Player::move(Direction _direction, float deltaTime) {
 
-    cout<<"direction: "<<this->direction.x<<" "<<this->direction.y<<" "<<this->direction.z<<" "<<endl;
-
     switch(_direction){
         case LEFT:
         this->position -= right * this->step * deltaTime;

@@ -6,6 +6,11 @@
 #include "drawable.h"
 
 
+
+
+
+
+
 Drawable::Drawable(char *filename) {
 
     this->rotateSpeed = 100.0f;
@@ -15,36 +20,58 @@ Drawable::Drawable(char *filename) {
 
     objData->load(filename);
 
-    //przejdz po wszystkich face i utworz bufor wierzcholkow
-    this->verticesCount = 0;
-
-    vec3 array[objData->faceCount];
-    for (int i=0; i<objData->faceCount; i++)
-        array[i] = vec3(1.1111f, 0,0);
 
 
-    vector< vector<vec3> > tab;
-    for (int i=0; i<objData->faceCount; i++){
-        vector<vec3> temp;
-        tab.push_back(temp);
+    vector< vector<vec3> > normals;
+
+    //utworz wektor wektorow wektorow normalnych
+    for (int i=0; i<objData->vertexCount; i++){
+        vector<vec3> v;
+        normals.push_back(v);
     }
 
 
+    //dla kazdego wierzcholka utworz wektor wektorow normalnych
 
+    for (int i=0; i<objData->faceCount; i++) {//for every face
+        for (int j=0; j<3; j++) {  //for every vertex in face
+            int vertexIndex = objData->faceList[i]->vertex_index[j];
+            int normalIndex = objData->faceList[i]->normal_index[j];
+            float x = objData->normalList[normalIndex]->e[0];
+            float y = objData->normalList[normalIndex]->e[1];
+            float z = objData->normalList[normalIndex]->e[2];
+            vec3 normal = vec3(x, y, z);
 
-        for (int i=0; i<objData->faceCount; i++) {//for every face
-        for (int j=0; j<3; j++){  //for every vertex in face
-            for(int k=0; k<3; k++){ //for every coordinate in vertex
-                //push vertex to buffer
-                this->verticesBuffer.push_back(objData->vertexList[objData->faceList[i]->vertex_index[j]]->e[k]);
-                //push vertex normal to buffer
-                this->normalBuffer.push_back(objData->normalList[objData->faceList[i]->normal_index[j]]->e[k]);
-            }
+            normals[vertexIndex].push_back(normal);
+        }
+    }
 
-
+    for (int i=0; i<normals.size(); i++){
+        for (int j=1; j<normals[i].size(); j++){
+            normals[i][0] += normals[i][j];
         }
 
+        normals[i][0] = normalize(normals[i][0]);
     }
+
+    for (int i=0; i<objData->faceCount; i++) {//for every face
+        for (int j=0; j<3; j++){  //for every vertex in face
+            int vertexIndex = objData->faceList[i]->vertex_index[j];
+            int normalIndex = objData->faceList[i]->normal_index[j];
+
+            for(int k=0; k<3; k++){ //for every coordinate in vertex
+                //push vertex to buffer
+                this->verticesBuffer.push_back(objData->vertexList[vertexIndex]->e[k]);
+                //push vertex normal to buffer
+                //this->normalBuffer.push_back(objData->normalList[normalIndex]->e[k]);
+            }
+                this->normalBuffer.push_back(normals[vertexIndex][0].x);
+                this->normalBuffer.push_back(normals[vertexIndex][0].y);
+                this->normalBuffer.push_back(normals[vertexIndex][0].z);
+
+        }
+    }
+
 
 
 
