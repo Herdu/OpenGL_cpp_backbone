@@ -157,8 +157,8 @@ void drawScene(GLFWwindow* window) {
 
 
     mat4 M=mat4(1.0f);
-    M = translate(M, player.eye);
-    M = scale(M, vec3(100,100,100));
+    M = translate(M, player.position);
+    M = scale(M, vec3(50,50,50));
     glLoadMatrixf(glm::value_ptr(V*M));
     skybox.draw();
     glfwSwapBuffers(window);
