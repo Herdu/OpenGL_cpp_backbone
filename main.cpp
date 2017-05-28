@@ -13,6 +13,7 @@
 #include "cube/cube.h"
 #include "player/player.h"
 #include "element/ground.h"
+#include "element/skybox.h"
 
 
 #include <stdio.h>
@@ -29,8 +30,9 @@ float windowX = 800.0f;
 float windowY = 600.0f;
 
 Player player;
+Skybox skybox;
 
-Drawable suzanne((char*)"loader/untitled.obj");
+Drawable suzanne((char*)"loader/suzanne.obj");
 
 
 
@@ -57,7 +59,6 @@ void mouse_callback(GLFWwindow* window, double mouseX, double mouseY)
         player.rotate(DOWN,deltaTime);
     glfwSetCursorPos(window, windowX/2.0f, windowY/2.0f);
 }
-
 
 
 void key_callback(GLFWwindow* window, int key,
@@ -108,7 +109,7 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetCursorPosCallback(window, mouse_callback);
 
     glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_COLOR_MATERIAL);
@@ -116,22 +117,21 @@ void initOpenGLProgram(GLFWwindow* window) {
 
     glEnable(GL_TEXTURE_2D);
 
-    glClearColor(0.4,0.2,1,1);
+    glClearColor(0.7,0.7,0.7,1);
+
+    skybox.loadTextures();
 
 
 
 
-    vector<unsigned char> image;
-    unsigned width,height;
-    unsigned error = lodepng::decode(image,width,height, "imgLoader/brick.png");
 
-    GLuint tex;// uchwyt
 
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
+
+
+
+
 
 
 }
@@ -143,18 +143,24 @@ void drawScene(GLFWwindow* window) {
 
     mat4 V = player.getCameraMatrix();
 
-    mat4 P = perspective(50*PI/180, windowX/windowY,1.0f,50.0f);
+    mat4 P = perspective(50*PI/180, windowX/windowY,1.0f,200.0f);
 
 
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(P));
     glMatrixMode(GL_MODELVIEW);
 
-    glColor3d(1,0.4,0.3);
+    glColor3d(0.4,0.0,0.8);
 
     suzanne.draw(V);
 
 
+
+    mat4 M=mat4(1.0f);
+    M = translate(M, player.eye);
+    M = scale(M, vec3(100,100,100));
+    glLoadMatrixf(glm::value_ptr(V*M));
+    skybox.draw();
     glfwSwapBuffers(window);
 }
 

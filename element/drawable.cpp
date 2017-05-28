@@ -46,6 +46,7 @@ Drawable::Drawable(char *filename) {
         }
     }
 
+    //normalizuj normalne wierzcholkow
     for (int i=0; i<normals.size(); i++){
         for (int j=1; j<normals[i].size(); j++){
             normals[i][0] += normals[i][j];
@@ -54,6 +55,9 @@ Drawable::Drawable(char *filename) {
         normals[i][0] = normalize(normals[i][0]);
     }
 
+
+
+    //umiesc wierzcholki i normalne w buforach
     for (int i=0; i<objData->faceCount; i++) {//for every face
         for (int j=0; j<3; j++){  //for every vertex in face
             int vertexIndex = objData->faceList[i]->vertex_index[j];
@@ -78,13 +82,6 @@ Drawable::Drawable(char *filename) {
 
 
     this->verticesCount = this->verticesBuffer.size()/3;
-
-
-    cout<<"Objekt "<<filename<<":"<<endl;
-    cout<<"  liczba wierzcholkow:           "<<objData->vertexCount<<endl;
-    cout<<"  liczba faces:                  "<<objData->faceCount<<endl;
-    cout<<"  liczba wierzcholkow w buforze: "<<this->verticesCount<<endl;
-
 
     this->modelMatrix = mat4(1.0f);
 
