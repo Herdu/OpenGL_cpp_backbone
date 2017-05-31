@@ -32,9 +32,13 @@ Skybox::Skybox(){
 
 void Skybox::draw(){
 
-    glClearColor(0,0,0,0);
+
     glDisable(GL_LIGHTING);
-    glDisable(GL_COLOR_MATERIAL);
+
+    glEnable(GL_TEXTURE_2D);
+
+    glColor3d(1,1,1);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     //glEnableClientState(GL_COLOR_ARRAY);
@@ -98,7 +102,8 @@ void Skybox::draw(){
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LIGHTING);
 
 }
 

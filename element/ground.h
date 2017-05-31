@@ -13,9 +13,21 @@
 
 #include "drawable.h"
 
+namespace GroundInternal{
+    extern float vertices[];
+    extern float normals[];
+    extern float texCoords[];
+
+}
+
+
+
 class Ground{
 private:
     float *vertices;
+    float* normals;
+    float* texCoords;
+    int vertexCount;
 
 public:
     Ground();

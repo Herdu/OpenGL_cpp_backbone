@@ -31,6 +31,7 @@ float windowY = 600.0f;
 
 Player player;
 Skybox skybox;
+Ground ground;
 
 Drawable suzanne((char*)"loader/suzanne.obj");
 
@@ -109,14 +110,11 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetCursorPosCallback(window, mouse_callback);
 
     glEnable(GL_LIGHTING);
-
+    glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
-    glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
-
-    glEnable(GL_TEXTURE_2D);
-
+    glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.7,0.7,0.7,1);
 
     skybox.loadTextures();
@@ -143,24 +141,35 @@ void drawScene(GLFWwindow* window) {
 
     mat4 V = player.getCameraMatrix();
 
-    mat4 P = perspective(50*PI/180, windowX/windowY,1.0f,200.0f);
+    mat4 P = perspective(50*PI/180, windowX/windowY,1.0f,100.0f);
 
 
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(glm::value_ptr(P));
     glMatrixMode(GL_MODELVIEW);
 
-    glColor3d(0.4,0.0,0.8);
 
+    //monkey
+    glColor3d(0.4,0.0,0.8);
     suzanne.draw(V);
 
 
-
+    glColor3d(0.0, 1.0, 0.0);
     mat4 M=mat4(1.0f);
+    M = scale(M, vec3(200,1,200));
+    M = translate(M, vec3(0,-2,0));
+    glLoadMatrixf(glm::value_ptr(V*M));
+    ground.draw(V);
+
+    //skybox
+    glDisable(GL_LIGHTING);
+    M=mat4(1.0f);
     M = translate(M, player.position);
     M = scale(M, vec3(50,50,50));
     glLoadMatrixf(glm::value_ptr(V*M));
     skybox.draw();
+
+    //end of draw
     glfwSwapBuffers(window);
 }
 
