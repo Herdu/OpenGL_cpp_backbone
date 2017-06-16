@@ -8,25 +8,38 @@
 
 void Ground::draw(mat4 V){
 
+    glColor3d(1,1,1);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    //glEnableClientState(GL_COLOR_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    //glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)bottom.data());
-    glVertexPointer(4,GL_FLOAT,0, this->vertices);
-    //glColorPointer(4,GL_FLOAT,0,colors);
-    glNormalPointer(GL_FLOAT,sizeof(float)*4,this->normals);
-    glTexCoordPointer(2,GL_FLOAT,0,this->texCoords);
-    glDrawArrays(GL_TRIANGLES,0,this->vertexCount);
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)texture.data());
 
 
-    glDisableClientState(GL_VERTEX_ARRAY);
-    //glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+
+    int groundSize = 2;
+    int _scale = 300.0f/groundSize;
+
+
+    for(int i=0; i<groundSize; i++){
+        for (int j=0; j<groundSize; j++){
+
+
+            mat4 M=mat4(1.0f);
+            M = scale(M, vec3(_scale,1.0f, _scale));
+            M = translate(M, vec3((i*1.0f*_scale - _scale),-2.0f,(j*1.0f*_scale - _scale)));
+            M = translate(M, vec3(0, -10.0f, 0));
+            glLoadMatrixf(glm::value_ptr(V*M));
+            Models::detailedCube.drawSolid();
+
+
+        }
+    }
+
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisable(GL_TEXTURE_2D);
 
 
 };
@@ -82,4 +95,38 @@ namespace GroundInternal{
             1.0f,1.0f, 1.0f,0.0f, 0.0f,0.0f,
     };
 }
+
+
+
+
+
+
+
+
+void Ground::loadTextures(){
+
+
+
+    lodepng::decode(this->texture, this->width, this->height, "images/asfalt.png");
+
+
+
+    GLuint tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    return;
+}
+
+
+
+
+
+
+
+
+
 

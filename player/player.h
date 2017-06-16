@@ -10,37 +10,54 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <fstream>
 #include "../enum/directions.h"
+
+#include "../element/track.h"
+#include "../element/cart.h"
 
 using namespace std;
 using namespace glm;
 
 class Player{
-
-public:
     vec3 eye;
     vec3 look;
     vec3 up;
     mat4 cameraMatrix;
+    vec3 position;
 
     vec3 direction;
     vec3 right;
-    vec3 position;
 
     float step;
     float rotStep;
 
 
+
     float horizontalAngle;
     float verticalAngle;
 
+    int loopIterator;
 
+    ofstream myfile;
+
+
+    vec3 lookAtOnTrack;
+    int currentTrack;
+
+
+public:
 
     Player();
+    vec3 getPosition(){return this->position;};
     void move(Direction direction,float delta);
     void rotate(Direction direction,float delta);
     void update();
+    void goToTrack(Track track);
+    void moveOnTrack(Cart cart);
+    void leaveTrack();
     mat4 getCameraMatrix();
+    bool isOnTrack;
 };
 
 #endif //OPENGL_CPP_BACKBONE2_PLAYER_H_H

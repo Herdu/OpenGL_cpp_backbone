@@ -7,13 +7,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <vector>
-
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 #include "enum/directions.h"
 #include "cube/cube.h"
 #include "player/player.h"
 #include "element/ground.h"
 #include "element/skybox.h"
+#include "element/track.h"
+#include "element/cart.h"
+#include "element/light.h"
+
 
 
 #include <stdio.h>
@@ -32,6 +38,9 @@ float windowY = 600.0f;
 Player player;
 Skybox skybox;
 Ground ground;
+Track track;
+Cart cart;
+Light light;
 
 Drawable suzanne((char*)"loader/suzanne.obj");
 
@@ -48,8 +57,10 @@ double lastTime;
 
 
 
-void mouse_callback(GLFWwindow* window, double mouseX, double mouseY)
-{
+
+
+
+void mouse_callback(GLFWwindow* window, double mouseX, double mouseY) {
     if (mouseX > windowX/2.0f)
         player.rotate(RIGHT,deltaTime);
     if (mouseX < windowX/2.0f)
@@ -69,6 +80,11 @@ void key_callback(GLFWwindow* window, int key,
 
         if (key == GLFW_KEY_ESCAPE)
             exit(0);
+        if (key==GLFW_KEY_SPACE)
+            player.goToTrack(track);
+
+        if (key==GLFW_KEY_ENTER)
+            player.leaveTrack();
     }
 
 
@@ -90,6 +106,7 @@ void key_callback(GLFWwindow* window, int key,
             case GLFW_KEY_DOWN:
                 player.move(BACKWARD,deltaTime);
                 break;
+
         }
 
     }
@@ -108,27 +125,27 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glfwSetKeyCallback(window,key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
-
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glClearColor(0.7,0.7,0.7,1);
+    glMatrixMode(GL_MODELVIEW);
 
     skybox.loadTextures();
+    track.load();
+    light.init();
+    ground.loadTextures();
+
+// Somewhere in the initialization part of your program…
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
 
 
-
-
-
-
-
-
-
-
-
+    float specReflection[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 96);
 
 
 
@@ -141,7 +158,12 @@ void drawScene(GLFWwindow* window) {
 
     mat4 V = player.getCameraMatrix();
 
-    mat4 P = perspective(50*PI/180, windowX/windowY,1.0f,100.0f);
+    mat4 P = perspective(50*PI/180, windowX/windowY,0.1f,300.0f);
+
+
+
+
+
 
 
     glMatrixMode(GL_PROJECTION);
@@ -149,23 +171,46 @@ void drawScene(GLFWwindow* window) {
     glMatrixMode(GL_MODELVIEW);
 
 
+
+    mat4 M = mat4(1.0f);
+
+
+    //light
+    light.draw(V);
+
+
+    //set position of main light
+    float pos[] = {200.0f, 200.0f, 200.0f, 1.0f};
+    glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
+    //ground
+
+    ground.draw(V);
+
+
     //monkey
     glColor3d(0.4,0.0,0.8);
     suzanne.draw(V);
 
+    //track
+    glColor3d(1.0, 1.0, 0.0);
+    track.draw(V);
 
-    glColor3d(0.0, 1.0, 0.0);
-    mat4 M=mat4(1.0f);
-    M = scale(M, vec3(200,1,200));
-    M = translate(M, vec3(0,-2,0));
-    glLoadMatrixf(glm::value_ptr(V*M));
-    ground.draw(V);
+
+
+    //cart
+    glColor3d(0.0f, 1.0f, 1.0f);
+    cart.update(deltaTime);
+    cart.draw(V, track);
+
+    if (player.isOnTrack)
+        player.moveOnTrack(cart);
 
     //skybox
-    glDisable(GL_LIGHTING);
+
     M=mat4(1.0f);
-    M = translate(M, player.position);
-    M = scale(M, vec3(50,50,50));
+    M = translate(M, player.getPosition());
+    M = scale(M, vec3(150,150,150));
     glLoadMatrixf(glm::value_ptr(V*M));
     skybox.draw();
 

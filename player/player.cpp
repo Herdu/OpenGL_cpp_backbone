@@ -6,12 +6,12 @@
 
 Player::Player(){
 
-
+    this->myfile.open("track/track.txt");
     this->eye = vec3(0.0f, 0.0f, -5.0f);
     this->look = vec3(0.0f, 0.0f, 0.0f);
     this->up = vec3(0.0f, 1.0f, 0.0f);
 
-    this->position = vec3(0.0f, 0.0f, -5.0f);
+    this->position = vec3(0.0f, 5.0f, -30.0f);
 
 
     this->horizontalAngle = 0.0f;
@@ -21,12 +21,21 @@ Player::Player(){
     this->step = 5.0f;
     this->rotStep = 1.0f;
 
+    this->loopIterator = 0;
+
+    this->isOnTrack = false;
 
     this->update();
+
+
 
 }
 
 void Player::move(Direction _direction, float deltaTime) {
+
+    if(this->isOnTrack)
+        return;
+
 
     switch(_direction){
         case LEFT:
@@ -44,11 +53,21 @@ void Player::move(Direction _direction, float deltaTime) {
     }
 
 
+
+
+    this->loopIterator++;
+    if (loopIterator > 5){
+
+        if (this->myfile.is_open()) {
+            this->myfile << this->position.x << " " << this->position.y << " " << this->position.z<< " "<< this->verticalAngle<< " " <<this->horizontalAngle<<'\n';
+        }
+        this->loopIterator = 0;
+    }
+
 }
 
 
 void Player::rotate(Direction _direction, float deltaTime) {
-
 
 
     switch(_direction){
@@ -89,11 +108,15 @@ void Player::update(){
 
     this->up = cross(this->right, this->direction);
 
-    this->cameraMatrix = lookAt(
-            this->position,
-            this->position + this->direction,
-            this->up
-    );
+
+
+        this->cameraMatrix = lookAt(
+                this->position,
+                this->position + this->direction,
+                this->up
+        );
+
+
 
 }
 
@@ -103,3 +126,27 @@ mat4 Player::getCameraMatrix() {
     return this->cameraMatrix;
 
 }
+
+
+void Player::goToTrack(Track track){
+    this->isOnTrack = true;
+};
+
+
+void Player::leaveTrack(){
+    this->isOnTrack = false;
+
+    this->eye = vec3(0.0f, 0.0f, -5.0f);
+    this->look = vec3(0.0f, 0.0f, 0.0f);
+    this->up = vec3(0.0f, 1.0f, 0.0f);
+
+    this->position = vec3(0.0f, 5.0f, -30.0f);
+
+
+    this->horizontalAngle = 0.0f;
+    this->verticalAngle = 0.0f;
+};
+
+void Player::moveOnTrack(Cart cart) {
+    this->position = cart.getPosition() + vec3(0, 3.0f, 0);
+};

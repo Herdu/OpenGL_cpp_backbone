@@ -84,6 +84,8 @@ Drawable::Drawable(char *filename) {
     this->verticesCount = this->verticesBuffer.size()/3;
 
     this->modelMatrix = mat4(1.0f);
+    this->modelMatrix = translate(this->modelMatrix, vec3(0,5,0));
+    this->modelMatrix = scale(this->modelMatrix, vec3(5,5,5));
 
 
 
@@ -94,9 +96,17 @@ Drawable::Drawable(char *filename) {
 void Drawable::draw(mat4 V) {
 
 
+    float specReflection[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 120);
+
+
+
+
+    //this->modelMatrix = scale(this->modelMatrix, vec3(2,2,2));
+
     this->modelMatrix = rotate(this->modelMatrix, rotateSpeed*(rotateX*3.14f/180.0f), vec3(0,1,0));
 
-    //this->modelMatrix = scale(this->modelMatrix, vec3(0.01f,0.01f,0.01f));
 
     //  this->modelMatrix = translate(this->modelMatrix, vec3(0,-1.0f,30.0f));
 
@@ -116,6 +126,12 @@ void Drawable::draw(mat4 V) {
 
    glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_VERTEX_ARRAY);
+
+
+
+    float specReflection2[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection2);
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 50);
 
 
 }

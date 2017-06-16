@@ -12,6 +12,18 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "drawable.h"
+#include "../cube/detailed_cube.h"
+
+
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
+#include <vector>
+
+#include <glm/glm.hpp>
+#include <GLFW/glfw3.h>
+
+#include "../imgLoader/lodepng.h"
 
 namespace GroundInternal{
     extern float vertices[];
@@ -28,10 +40,14 @@ private:
     float* normals;
     float* texCoords;
     int vertexCount;
+    vector<unsigned char> texture;
+    unsigned height;
+    unsigned width;
 
 public:
     Ground();
     void draw(mat4 V);
+    void loadTextures();
 };
 
 #endif //OPENGL_CPP_BACKBONE2_GROUND_H
