@@ -45,6 +45,8 @@ class Player{
     vec3 lookAtOnTrack;
     int currentTrack;
 
+    bool isTorch;
+
 
 public:
 
@@ -58,6 +60,10 @@ public:
     void leaveTrack();
     mat4 getCameraMatrix();
     bool isOnTrack;
+
+    void torch();
+    void updateTorch(mat4 V);
+    void init();
 };
 
 #endif //OPENGL_CPP_BACKBONE2_PLAYER_H_H

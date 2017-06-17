@@ -46,6 +46,8 @@ public:
     void update(float deltaTime);
     vec3 getPosition(){return this->position;};
     Cart();
+    void init();
+
 };
 
 #endif //OPENGL_CPP_BACKBONE2_CART_H

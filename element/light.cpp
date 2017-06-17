@@ -6,7 +6,7 @@
 
 void Light::init(){
 
-    glEnable(GL_LIGHT1);
+    //glEnable(GL_LIGHT1);
 
     this->posx = 1.0f;
     this->posy = 3.0f;
@@ -65,5 +65,7 @@ void Light::draw(mat4 V) {
 
     float direction[] = {this->dirx,this->diry,this->dirz};
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, direction);
+
+
     glEnable(GL_LIGHTING);
 };

@@ -5,6 +5,7 @@
 #include "skybox.h"
 
 
+
 Skybox::Skybox(){
 
     backVertices=SkyboxInternal::backVertices;
@@ -30,21 +31,22 @@ Skybox::Skybox(){
     vertexCount= 6;
 }
 
-void Skybox::draw(){
+void Skybox::draw(vec3 color){
 
 
     glDisable(GL_LIGHTING);
-
+    glDisable(GL_COLOR_MATERIAL);
     glEnable(GL_TEXTURE_2D);
 
-    glColor3d(0.8f,0.0f,0.6f);
-
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+    glColor3d(color.x, color.y, color.z);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     //glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 33071);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 33071);
 
     //back wall
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*)back.data());
@@ -105,6 +107,7 @@ void Skybox::draw(){
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
 
 }
 
@@ -130,7 +133,7 @@ void Skybox::loadTextures(){
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
+    glEnable(GL_COLOR_MATERIAL);
     return;
 }
 

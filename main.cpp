@@ -32,8 +32,10 @@
 using namespace glm;
 using namespace std;
 
-float windowX = 800.0f;
-float windowY = 600.0f;
+float windowX = 1000.0f;
+float windowY = 650.0f;
+float stepBoost = 20.0f;
+
 
 Player player;
 Skybox skybox;
@@ -41,6 +43,7 @@ Ground ground;
 Track track;
 Cart cart;
 Light light;
+
 
 Drawable suzanne((char*)"loader/suzanne.obj");
 
@@ -57,6 +60,8 @@ double lastTime;
 
 
 
+
+vec3 skyColor;
 
 
 
@@ -85,32 +90,52 @@ void key_callback(GLFWwindow* window, int key,
 
         if (key==GLFW_KEY_ENTER)
             player.leaveTrack();
+
+        if (key==GLFW_KEY_W)
+            player.move(FORWARD,deltaTime*stepBoost);
+        if (key==GLFW_KEY_S)
+            player.move(BACKWARD,deltaTime*stepBoost);
+        if (key==GLFW_KEY_A)
+            player.move(LEFT,deltaTime*stepBoost);
+        if (key==GLFW_KEY_D)
+            player.move(RIGHT,deltaTime*stepBoost);
     }
 
 
-    if (action == GLFW_REPEAT){
-        switch (key){
-            case GLFW_KEY_A:
-            case GLFW_KEY_LEFT:
-                player.move(LEFT,deltaTime);
-                break;
-            case GLFW_KEY_D:
-            case GLFW_KEY_RIGHT:
-                player.move(RIGHT,deltaTime);
-                break;
-            case GLFW_KEY_W:
-            case GLFW_KEY_UP:
-                player.move(FORWARD,deltaTime);
-                break;
-            case GLFW_KEY_S:
-            case GLFW_KEY_DOWN:
-                player.move(BACKWARD,deltaTime);
-                break;
+    if (action == GLFW_RELEASE){
+
+
+        if (key==GLFW_KEY_L)
+            player.torch();
+
+        if (key==GLFW_KEY_1)
+            if(!glIsEnabled(GL_LIGHT0)){
+                glEnable(GL_LIGHT0);
+                skyColor = vec3(0.8, 0.8, 0.8);
+            }
+            else{
+                glDisable(GL_LIGHT0);
+                skyColor = vec3(0.2, 0.2, 0.2);
+
+            }
+
+
+        if (key==GLFW_KEY_2)
+            player.torch();
+
+        if (key==GLFW_KEY_3)
+            if(!glIsEnabled(GL_LIGHT3))
+                glEnable(GL_LIGHT3);
+            else
+                glDisable(GL_LIGHT3);
+
 
         }
 
-    }
+
 }
+
+
 
 
 //Procedura obsługi błędów
@@ -125,11 +150,19 @@ void initOpenGLProgram(GLFWwindow* window) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glfwSetKeyCallback(window,key_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+
     glEnable(GL_DEPTH_TEST);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
     glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+
     glClearColor(0.7,0.7,0.7,1);
     glMatrixMode(GL_MODELVIEW);
 
@@ -137,10 +170,13 @@ void initOpenGLProgram(GLFWwindow* window) {
     track.load();
     light.init();
     ground.loadTextures();
+    player.init();
+    cart.init();
+
+    skyColor = vec3(0.8f,0.8f,0.8f);
 
 // Somewhere in the initialization part of your program…
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
+
 
 
     float specReflection[] = { 0.2f, 0.2f, 0.2f, 1.0f };
@@ -176,14 +212,18 @@ void drawScene(GLFWwindow* window) {
 
 
     //light
-    light.draw(V);
+    //light.draw(V);
 
 
     //set position of main light
+    glLoadMatrixf(glm::value_ptr(V*M));
     float pos[] = {200.0f, 200.0f, 200.0f, 1.0f};
     glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
+    player.updateTorch(V);
+
     //ground
+
 
     ground.draw(V);
 
@@ -212,7 +252,7 @@ void drawScene(GLFWwindow* window) {
     M = translate(M, player.getPosition());
     M = scale(M, vec3(150,150,150));
     glLoadMatrixf(glm::value_ptr(V*M));
-    skybox.draw();
+    skybox.draw(skyColor);
 
     //end of draw
     glfwSwapBuffers(window);
@@ -231,7 +271,7 @@ int main() {
 
 
 
-    window = glfwCreateWindow(windowX, windowY,"RollerCoaster", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
+    window = glfwCreateWindow(windowX, windowY,"RollerCoaster",  NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
     if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
     {
@@ -252,7 +292,6 @@ int main() {
 
 
     lastTime = 0;
-
 
 
     //Główna pętla

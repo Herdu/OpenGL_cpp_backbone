@@ -24,6 +24,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "../cube/cube.h"
+#include "../cube/sphere.h"
+#include "../cube/detailed_cube.h"
+
+#include "../imgLoader/lodepng.h"
 
 using namespace std;
 using namespace glm;
@@ -44,7 +48,17 @@ private:
     vector<float> buffer;
     vector<float> normal;
     int bufferCount;
+    float* textureCoord;
 
+
+    vector<unsigned char> texture;
+    unsigned height;
+    unsigned width;
+    void generateColumn();
+
+    vector<float> columnBuffer;
+    int columnCount;
+    vector<float> columnNormal;
 
 public:
     void load();

@@ -8,7 +8,7 @@
 
 void Ground::draw(mat4 V){
 
-    glColor3d(1,1,1);
+    glColor3d(0.2, 0.8, 0.2);
 
     glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -107,7 +107,7 @@ void Ground::loadTextures(){
 
 
 
-    lodepng::decode(this->texture, this->width, this->height, "images/asfalt.png");
+    lodepng::decode(this->texture, this->width, this->height, "images/ground.png");
 
 
 

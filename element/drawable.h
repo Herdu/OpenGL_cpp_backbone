@@ -14,6 +14,9 @@
 #include <vector>
 #include <algorithm>
 #include "../loader/objLoader.h"
+#include "../cube/cube.h"
+#include "../cube/detailed_cube.h"
+
 
 using namespace std;
 using namespace glm;

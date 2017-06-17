@@ -84,7 +84,7 @@ Drawable::Drawable(char *filename) {
     this->verticesCount = this->verticesBuffer.size()/3;
 
     this->modelMatrix = mat4(1.0f);
-    this->modelMatrix = translate(this->modelMatrix, vec3(0,5,0));
+    this->modelMatrix = translate(this->modelMatrix, vec3(0,20,0));
     this->modelMatrix = scale(this->modelMatrix, vec3(5,5,5));
 
 
@@ -128,6 +128,23 @@ void Drawable::draw(mat4 V) {
     glDisableClientState(GL_VERTEX_ARRAY);
 
 
+    float specReflection3[] = { 0.8f, 0.8f, 1.0f, 1.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection3);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, specReflection3);
+
+    glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 120);
+
+
+
+    //draw column
+    glColor3d(1.0f, 0.0, 0.5f);
+
+        mat4 M = mat4(1.0f);
+        M = rotate(this->modelMatrix, rotateSpeed*(rotateX*3.14f/180.0f), vec3(0,1,0));
+        M = translate(M, vec3(0, (-5.0f),0));
+        M = scale(M, vec3(0.1f, 5.0f, 0.1f));
+        glLoadMatrixf(glm::value_ptr(V*M));
+        Models::detailedCube.drawSolid();
 
     float specReflection2[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection2);
